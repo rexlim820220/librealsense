@@ -1,4 +1,4 @@
-<p align="center"><img src="http://www.robertoblanco.com/wp-content/uploads/2016/09/HeaderLogo_Intel_Realsense-1.png" width="70%" /><br><br></p>
+<p align="center"><img src="http://www.robertoblanco.com/wp-content/uploads/2016/09/HeaderLogo_Intel_Realsense-1.png" width="40%" /><br><br></p>
 
 -----------------
 
