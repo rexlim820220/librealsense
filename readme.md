@@ -1,5 +1,4 @@
-<p align="center"><img src="="40%" /><br><br></p>
-![232178](http://www.robertoblanco.com/wp-content/uploads/2016/09/HeaderLogo_Intel_Realsense-1.png" width)
+<p align="center"><img src="http://www.robertoblanco.com/wp-content/uploads/2016/09/HeaderLogo_Intel_Realsense-1.png" width="40%" /><br><br></p>
 -----------------
 
 **CI State**: [![Build Status](https://travis-ci.org/IntelRealSense/librealsense.svg?branch=development)](https://travis-ci.org/IntelRealSense/librealsense)
