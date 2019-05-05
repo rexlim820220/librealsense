@@ -1,4 +1,4 @@
-<p align="center"><img src="doc/img/realsense.png" width="70%" /><br><br></p>
+<p align="center"><img src="https://cms-assets.tutsplus.com/uploads/users/22/posts/24740/preview_image/intel-realsense-for-game-developers.png" width="34%" /><br><br></p>
 -----------------
 
 **CI State**: [![Build Status](https://travis-ci.org/IntelRealSense/librealsense.svg?branch=development)](https://travis-ci.org/IntelRealSense/librealsense)
