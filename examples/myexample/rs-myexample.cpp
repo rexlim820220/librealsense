@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <imgui.h>
+#include <sstream>
 #include "example.hpp"
 #include "imgui_impl_glfw.h"
 #include <librealsense2/rs.hpp>
@@ -41,6 +42,7 @@ int main(int argc, char ** argv) try
 
     std::size_t                 dev_id = 0;
     auto         list = ctx.query_devices();
+
     for (auto&& dev : list)
     {
         sync(&dev, dev_id);
@@ -79,7 +81,7 @@ int main(int argc, char ** argv) try
         button();
         for (auto &&pipe : pipelines)
         {
-            rs2::device device = pipe.get_active_profile().get_device();
+            rs2::device device = pipe.get_active_profile().get_device();           
             if (!device.as<rs2::playback>()) {
                 ImGui::SetCursorPos({ app.width() / 2 - 100, 3 * app.height() / 5 + 90});
                 ImGui::Text("Click 'record' to start recording");
@@ -91,7 +93,7 @@ int main(int argc, char ** argv) try
                         pipe.stop();
                         rs2::pipeline pipe;
                         rs2::config cfg; // Declare a new configuration
-                        cfg.enable_record_to_file("a.bag");
+                        cfg.enable_record_to_file(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) + std::string(".bag"));
                         pipe.start(cfg); //File will be opened at this point
                         device = pipe.get_active_profile().get_device();
                     }
@@ -103,9 +105,14 @@ int main(int argc, char ** argv) try
             }
             if (device.as<rs2::recorder>())
             {
+                char message[20];
                 if (recording){
                     ImGui::SetCursorPos({ app.width() / 2 - 100, 3 * app.height() / 5 + 60 });
-                    ImGui::TextColored({ 255 / 255.f, 64 / 255.f, 54 / 255.f, 1 }, "Recording to file 'a.bag'");
+                    strcpy (message, "Recording to file ");
+                    strcat (message, device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+                    strcat (message, ".bag");
+                    ImGui::TextColored({ 255 / 255.f, 64 / 255.f, 54 / 255.f, 1 }, message);
+                    memset(message, 0, sizeof(message));
                 }
                 ImGui::SetCursorPos({ app.width() / 2, 3 * app.height() / 5 + 110 });
                 if (ImGui::Button("pause\nrecord", { 50, 50 }))
@@ -225,12 +232,15 @@ void play (window app,rs2::device device,rs2::pipeline *pipe) {
     ImGui::SetCursorPos({ app.width() / 2 - 100, 4 * app.height() / 5 + 50});
     if (ImGui::Button("play", { 50, 50 }))
     {
+        char message[100];
         if (!device.as<rs2::playback>())
         {
             pipe->stop(); // Stop streaming with default configuration
             rs2::pipeline pipe;
             rs2::config cfg;
-            cfg.enable_device_from_file("a.bag");
+            strcpy (message, device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+            strcat (message, ".bag");
+            cfg.enable_device_from_file(message);
             pipe.start(cfg); //File will be opened in read mode at this point
             device = pipe.get_active_profile().get_device();
         }
