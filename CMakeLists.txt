@@ -1,4 +1,6 @@
-#  minimum required cmake version: 3.1.0
+#  minimum required cmake version: 3.1.0"
+set(CMAKE_C_COMPILER /usr/bin/gcc )
+set(CMAKE_CXX_COMPILER /usr/bin/g++)
 cmake_minimum_required(VERSION 3.1.0)
 project(librealsense2 LANGUAGES CXX C)
 
