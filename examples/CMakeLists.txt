@@ -1,69 +1,47 @@
+
+# License: Apache 2.0. See LICENSE file in root directory.
+# Copyright(c) 2019 Intel Corporation. All Rights Reserved.
 #  minimum required cmake version: 3.1.0
 cmake_minimum_required(VERSION 3.1.0)
-project(librealsense2 LANGUAGES CXX C)
 
-# include librealsense general configuration
-include(CMake/global_config.cmake)
+project(RealsenseExamples)
 
+# Save the command line compile commands in the build output
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+# View the makefile commands during build
+#set(CMAKE_VERBOSE_MAKEFILE on)
 
-config_cxx_flags()
-
-# include os specific macros
-# macro definition located at "CMake/global_config.cmake"
-include(CMake/include_os.cmake)
-
-# set os specific configuration flags
-# macro definition located at "CMake/<OS>_config.cmake"
-os_set_flags()
-
-# set global configuration flags
-# macro definition located at "CMake/global_config.cmake"
-global_set_flags()
-
-if(BUILD_SHARED_LIBS)
-    add_library(${LRS_TARGET} SHARED "")
+if(BUILD_GRAPHICAL_EXAMPLES)
+    include(${CMAKE_SOURCE_DIR}/CMake/opengl_config.cmake)
 else()
-    add_library(${LRS_TARGET} STATIC "")
+    if(ANDROID_NDK_TOOLCHAIN_INCLUDED)
+        find_library(log-lib log)
+        set(DEPENDENCIES realsense2 log)
+    else()
+        set(DEPENDENCIES realsense2)
+    endif()
 endif()
 
-# set library version
-set_target_properties(${LRS_TARGET} PROPERTIES VERSION ${REALSENSE_VERSION_STRING} SOVERSION "${REALSENSE_VERSION_MAJOR}.${REALSENSE_VERSION_MINOR}")
-
-# Checking Internet connection, as TM2 needs to download the FW from amazon cloud
-if(BUILD_WITH_TM2)
-    include(CMake/tm2_connectivity_check.cmake)
-endif()
-
-include(include/CMakeLists.txt)
-include(src/CMakeLists.txt)
-include(third-party/CMakeLists.txt)
-
-# configure the project according to OS specific requirments
-# macro definition located at "CMake/<OS>_config.cmake"
-os_target_config()
-
-# global project configuration
-# macro definition located at "CMake/global_config.cmake"
-global_target_config()
-option(BUILD_CV_KINFU_EXAMPLE "Build OpenCV KinectFusion example" OFF)
-
-add_subdirectory(wrappers)
-
-if (BUILD_EXAMPLES AND BUILD_GRAPHICAL_EXAMPLES)
-    add_subdirectory(third-party/glfw)
-endif()
-
-if(BUILD_EXAMPLES)
-    add_subdirectory(examples)
-    add_subdirectory(tools)
-endif()
-
-if(BUILD_UNIT_TESTS)
-    add_subdirectory(unit-tests)
-endif()
-
-if (BUILD_WITH_TM2)
-    add_tm2()
-endif()
-
-include(CMake/install_config.cmake)
+add_subdirectory(hello-realsense)
+add_subdirectory(software-device)
+add_subdirectory(capture)
+add_subdirectory(callback)
+add_subdirectory(save-to-disk)
+add_subdirectory(multicam)
+add_subdirectory(pointcloud)
+add_subdirectory(align)
+add_subdirectory(align-advanced)
+add_subdirectory(sensor-control)
+add_subdirectory(measure)
+add_subdirectory(myexample)
+add_subdirectory(C/depth)
+add_subdirectory(C/color)
+add_subdirectory(C/distance)
+add_subdirectory(post-processing)
+add_subdirectory(record-playback)
+add_subdirectory(motion)
+add_subdirectory(pose)
+add_subdirectory(pose-predict)
+add_subdirectory(pose-and-image)
+add_subdirectory(trajectory)
+add_subdirectory(ar-basic)
