@@ -23,3 +23,13 @@ if(BUILD_GRAPHICAL_EXAMPLES)
     set_target_properties (rs-myexample PROPERTIES FOLDER Examples)
     install(TARGETS rs-myexample RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
+
+# Find Packages
+find_package( PCL 1.9 REQUIRED )
+
+if( PCL_FOUND )
+  include_directories( ${PCL_INCLUDE_DIRS} )
+  add_definitions( ${PCL_DEFINITIONS} )
+  link_directories( ${PCL_LIBRARY_DIRS} )
+  target_link_libraries( rs-myexample ${PCL_LIBRARIES} )
+endif()
