@@ -3,14 +3,85 @@
 
 #include <librealsense2/rs.hpp> // Include RealSense Cross Platform API
 #include "example.hpp"          // Include short list of convenience functions for rendering
-
 #include <algorithm>            // std::min, std::max
 
 // Helper functions
 void register_glfw_callbacks(window& app, glfw_state& app_state);
 
+// Reading Point Cloud data from PCD files
+#include <iostream>
+#include <pcl/io/io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/visualization/cloud_viewer.h>
+
+int user_data;
+
+void viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
+{
+    viewer.setBackgroundColor (0, 0, 232);
+    pcl::PointXYZ o;
+    o.x = 1.0;
+    o.y = 0;
+    o.z = 0;
+    //viewer.addSphere (o, 0.25, "sphere", 0);
+    std::cout << "i only run once" << std::endl;
+}
+
+void viewerPsycho (pcl::visualization::PCLVisualizer& viewer)
+{
+    //static unsigned count = 0;
+    //std::stringstream ss;
+    //ss << "Once per viewer loop: " << count++;
+    //viewer.removeShape ("text", 0);
+    //viewer.addText (ss.str(), 200, 300, "text", 0);
+    user_data++;
+}
+
 int main(int argc, char * argv[]) try
 {
+    pcl::PointCloud <pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+    char fname[FILENAME_MAX] = "/home/adam/Desktop/3655.pcd";
+    if (pcl::io::loadPCDFile(fname, *cloud) == -1)
+    {
+        PCL_ERROR ("Couldn't read file test.pcd \n");
+        return -1;
+    }
+
+    /*std::cout<<"Loaded "
+             << cloud->width * cloud->height
+             << " data points from test.pcd with the following fields: "
+             << std::endl;
+
+    for (size_t i = 0; i < cloud->points.size (); ++i)
+        std::cout << "    " << cloud->points[i].x
+                  << " "    << cloud->points[i].y
+                  << " "    << cloud->points[i].z << std::endl;*/
+
+    pcl::PassThrough<pcl::PointXYZ> pass;
+    //pass.setInputCloud(cloud);
+    //pass.setFilterFieldName("z");
+    //pass.setFilterLimits(0.0, 5.0);
+    //pass.filter(*cloud);
+
+    pcl::visualization::CloudViewer viewer("Cloud Viewer");
+    viewer.showCloud(cloud);
+
+    viewer.runOnVisualizationThreadOnce (viewerOneOff);
+
+    //This will get called once per visualization iteration
+    viewer.runOnVisualizationThread (viewerPsycho);
+    while (!viewer.wasStopped ())
+    {
+        //you can also do cool processing here
+        //FIXME: Note that this is running in a separate thread from viewerPsycho
+        //and you should guard against race conditions yourself...
+        user_data++;
+    }
+
+    /*
     // Create a simple OpenGL window for rendering:
     window app(1280, 720, "RealSense Pointcloud Example");
     // Construct an object to manage view state
@@ -53,6 +124,7 @@ int main(int argc, char * argv[]) try
         // Draw the pointcloud
         draw_pointcloud(app.width(), app.height(), app_state, points);
     }
+    */
 
     return EXIT_SUCCESS;
 }
